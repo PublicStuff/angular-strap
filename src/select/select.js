@@ -26,7 +26,7 @@ angular.module('mgcrea.ngStrap.select', ['mgcrea.ngStrap.tooltip', 'mgcrea.ngStr
     this.$get = function($window, $document, $rootScope, $tooltip) {
 
       var bodyEl = angular.element($window.document.body);
-      var isTouch = 'createTouch' in $window.document;
+      var isTouch = false; //'createTouch' in $window.document;
 
       function SelectFactory(element, controller, config) {
 
