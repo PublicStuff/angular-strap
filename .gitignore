@@ -10,4 +10,4 @@ node_modules/
 /docs/
 /test/coverage/
 !.gitignore
-!dist/
+dist/
