@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.3 - 2016-03-08
+ * @version v2.0.3 - 2016-03-09
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -8,19 +8,19 @@
 (function(window, document, undefined) {
 'use strict';
 
-// Source: aside.tpl.js
-angular.module('mgcrea.ngStrap.aside').run([
-  '$templateCache',
-  function ($templateCache) {
-    $templateCache.put('aside/aside.tpl.html', '<div class="aside" tabindex="-1" role="dialog"><div class="aside-dialog"><div class="aside-content"><div class="aside-header" ng-show="title"><button type="button" class="close" ng-click="$hide()">&times;</button><h4 class="aside-title" ng-bind="title"></h4></div><div class="aside-body" ng-bind="content"></div><div class="aside-footer"><button type="button" class="btn btn-default" ng-click="$hide()">Close</button></div></div></div></div>');
-  }
-]);
-
 // Source: alert.tpl.js
 angular.module('mgcrea.ngStrap.alert').run([
   '$templateCache',
   function ($templateCache) {
     $templateCache.put('alert/alert.tpl.html', '<div class="alert" tabindex="-1" ng-class="[type ? \'alert-\' + type : null]"><button type="button" class="close" ng-if="dismissable" ng-click="$hide()">&times;</button> <strong ng-bind="title"></strong>&nbsp;<span ng-bind-html="content"></span></div>');
+  }
+]);
+
+// Source: aside.tpl.js
+angular.module('mgcrea.ngStrap.aside').run([
+  '$templateCache',
+  function ($templateCache) {
+    $templateCache.put('aside/aside.tpl.html', '<div class="aside" tabindex="-1" role="dialog"><div class="aside-dialog"><div class="aside-content"><div class="aside-header" ng-show="title"><button type="button" class="close" ng-click="$hide()">&times;</button><h4 class="aside-title" ng-bind="title"></h4></div><div class="aside-body" ng-bind="content"></div><div class="aside-footer"><button type="button" class="btn btn-default" ng-click="$hide()">Close</button></div></div></div></div>');
   }
 ]);
 
@@ -32,14 +32,6 @@ angular.module('mgcrea.ngStrap.datepicker').run([
   }
 ]);
 
-// Source: modal.tpl.js
-angular.module('mgcrea.ngStrap.modal').run([
-  '$templateCache',
-  function ($templateCache) {
-    $templateCache.put('modal/modal.tpl.html', '<div class="modal" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header" ng-show="title"><button type="button" class="close" ng-click="$hide()">&times;</button><h4 class="modal-title" ng-bind="title"></h4></div><div class="modal-body" ng-bind="content"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="$hide()">Close</button></div></div></div></div>');
-  }
-]);
-
 // Source: dropdown.tpl.js
 angular.module('mgcrea.ngStrap.dropdown').run([
   '$templateCache',
@@ -48,11 +40,11 @@ angular.module('mgcrea.ngStrap.dropdown').run([
   }
 ]);
 
-// Source: select.tpl.js
-angular.module('mgcrea.ngStrap.select').run([
+// Source: modal.tpl.js
+angular.module('mgcrea.ngStrap.modal').run([
   '$templateCache',
   function ($templateCache) {
-    $templateCache.put('select/select.tpl.html', '<ul tabindex="-1" class="select dropdown-menu" ng-show="$isVisible()" role="select"><li role="presentation" ng-repeat="match in $matches" ng-class="{active: $isActive($index)}"><a style="cursor: default" role="menuitem" tabindex="-1" ng-click="$select($index, $event)"><span ng-bind="match.label"></span> <i class="{{$iconCheckmark}} pull-right" ng-if="$isMultiple && $isActive($index)"></i></a></li></ul>');
+    $templateCache.put('modal/modal.tpl.html', '<div class="modal" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content"><div class="modal-header" ng-show="title"><button type="button" class="close" ng-click="$hide()">&times;</button><h4 class="modal-title" ng-bind="title"></h4></div><div class="modal-body" ng-bind="content"></div><div class="modal-footer"><button type="button" class="btn btn-default" ng-click="$hide()">Close</button></div></div></div></div>');
   }
 ]);
 
@@ -61,6 +53,14 @@ angular.module('mgcrea.ngStrap.popover').run([
   '$templateCache',
   function ($templateCache) {
     $templateCache.put('popover/popover.tpl.html', '<div class="popover"><div class="arrow"></div><h3 class="popover-title" ng-bind="title" ng-show="title"></h3><div class="popover-content" ng-bind="content"></div></div>');
+  }
+]);
+
+// Source: select.tpl.js
+angular.module('mgcrea.ngStrap.select').run([
+  '$templateCache',
+  function ($templateCache) {
+    $templateCache.put('select/select.tpl.html', '<ul tabindex="-1" class="select dropdown-menu" ng-show="$isVisible()" role="select"><li role="presentation" ng-repeat="match in $matches" ng-class="{active: $isActive($index)}"><a style="cursor: default" role="menuitem" tabindex="-1" ng-click="$select($index, $event)"><span ng-bind="match.label"></span> <i class="{{$iconCheckmark}} pull-right" ng-if="$isMultiple && $isActive($index)"></i></a></li></ul>');
   }
 ]);
 

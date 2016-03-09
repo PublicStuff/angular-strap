@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.3 - 2016-03-08
+ * @version v2.0.3 - 2016-03-09
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -211,95 +211,6 @@ angular.module('mgcrea.ngStrap.affix', [
   };
 });
 
-// Source: aside.js
-angular.module('mgcrea.ngStrap.aside', ['mgcrea.ngStrap.modal']).provider('$aside', function () {
-  var defaults = this.defaults = {
-      animation: 'am-fade-and-slide-right',
-      prefixClass: 'aside',
-      placement: 'right',
-      template: 'aside/aside.tpl.html',
-      contentTemplate: false,
-      container: false,
-      element: null,
-      backdrop: true,
-      keyboard: true,
-      html: false,
-      show: true
-    };
-  this.$get = [
-    '$modal',
-    function ($modal) {
-      function AsideFactory(config) {
-        var $aside = {};
-        // Common vars
-        var options = angular.extend({}, defaults, config);
-        $aside = $modal(options);
-        return $aside;
-      }
-      return AsideFactory;
-    }
-  ];
-}).directive('bsAside', [
-  '$window',
-  '$sce',
-  '$aside',
-  function ($window, $sce, $aside) {
-    var requestAnimationFrame = $window.requestAnimationFrame || $window.setTimeout;
-    return {
-      restrict: 'EAC',
-      scope: true,
-      link: function postLink(scope, element, attr, transclusion) {
-        // Directive options
-        var options = {
-            scope: scope,
-            element: element,
-            show: false
-          };
-        angular.forEach([
-          'template',
-          'contentTemplate',
-          'placement',
-          'backdrop',
-          'keyboard',
-          'html',
-          'container',
-          'animation'
-        ], function (key) {
-          if (angular.isDefined(attr[key]))
-            options[key] = attr[key];
-        });
-        // Support scope as data-attrs
-        angular.forEach([
-          'title',
-          'content'
-        ], function (key) {
-          attr[key] && attr.$observe(key, function (newValue, oldValue) {
-            scope[key] = $sce.trustAsHtml(newValue);
-          });
-        });
-        // Support scope as an object
-        attr.bsAside && scope.$watch(attr.bsAside, function (newValue, oldValue) {
-          if (angular.isObject(newValue)) {
-            angular.extend(scope, newValue);
-          } else {
-            scope.content = newValue;
-          }
-        }, true);
-        // Initialize aside
-        var aside = $aside(options);
-        // Trigger
-        element.on(attr.trigger || 'click', aside.toggle);
-        // Garbage collection
-        scope.$on('$destroy', function () {
-          aside.destroy();
-          options = null;
-          aside = null;
-        });
-      }
-    };
-  }
-]);
-
 // Source: alert.js
 // @BUG: following snippet won't compile correctly
 // @TODO: submit issue to core
@@ -405,6 +316,95 @@ angular.module('mgcrea.ngStrap.alert', ['mgcrea.ngStrap.modal']).provider('$aler
           alert.destroy();
           options = null;
           alert = null;
+        });
+      }
+    };
+  }
+]);
+
+// Source: aside.js
+angular.module('mgcrea.ngStrap.aside', ['mgcrea.ngStrap.modal']).provider('$aside', function () {
+  var defaults = this.defaults = {
+      animation: 'am-fade-and-slide-right',
+      prefixClass: 'aside',
+      placement: 'right',
+      template: 'aside/aside.tpl.html',
+      contentTemplate: false,
+      container: false,
+      element: null,
+      backdrop: true,
+      keyboard: true,
+      html: false,
+      show: true
+    };
+  this.$get = [
+    '$modal',
+    function ($modal) {
+      function AsideFactory(config) {
+        var $aside = {};
+        // Common vars
+        var options = angular.extend({}, defaults, config);
+        $aside = $modal(options);
+        return $aside;
+      }
+      return AsideFactory;
+    }
+  ];
+}).directive('bsAside', [
+  '$window',
+  '$sce',
+  '$aside',
+  function ($window, $sce, $aside) {
+    var requestAnimationFrame = $window.requestAnimationFrame || $window.setTimeout;
+    return {
+      restrict: 'EAC',
+      scope: true,
+      link: function postLink(scope, element, attr, transclusion) {
+        // Directive options
+        var options = {
+            scope: scope,
+            element: element,
+            show: false
+          };
+        angular.forEach([
+          'template',
+          'contentTemplate',
+          'placement',
+          'backdrop',
+          'keyboard',
+          'html',
+          'container',
+          'animation'
+        ], function (key) {
+          if (angular.isDefined(attr[key]))
+            options[key] = attr[key];
+        });
+        // Support scope as data-attrs
+        angular.forEach([
+          'title',
+          'content'
+        ], function (key) {
+          attr[key] && attr.$observe(key, function (newValue, oldValue) {
+            scope[key] = $sce.trustAsHtml(newValue);
+          });
+        });
+        // Support scope as an object
+        attr.bsAside && scope.$watch(attr.bsAside, function (newValue, oldValue) {
+          if (angular.isObject(newValue)) {
+            angular.extend(scope, newValue);
+          } else {
+            scope.content = newValue;
+          }
+        }, true);
+        // Initialize aside
+        var aside = $aside(options);
+        // Trigger
+        element.on(attr.trigger || 'click', aside.toggle);
+        // Garbage collection
+        scope.$on('$destroy', function () {
+          aside.destroy();
+          options = null;
+          aside = null;
         });
       }
     };
@@ -1144,6 +1144,400 @@ angular.module('mgcrea.ngStrap.datepicker', [
   ];
 });
 
+// Source: dropdown.js
+angular.module('mgcrea.ngStrap.dropdown', ['mgcrea.ngStrap.tooltip']).provider('$dropdown', function () {
+  var defaults = this.defaults = {
+      animation: 'am-fade',
+      prefixClass: 'dropdown',
+      placement: 'bottom-left',
+      template: 'dropdown/dropdown.tpl.html',
+      trigger: 'click',
+      container: false,
+      keyboard: true,
+      html: false,
+      delay: 0
+    };
+  this.$get = [
+    '$window',
+    '$rootScope',
+    '$tooltip',
+    function ($window, $rootScope, $tooltip) {
+      var bodyEl = angular.element($window.document.body);
+      var matchesSelector = Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
+      function DropdownFactory(element, config) {
+        var $dropdown = {};
+        // Common vars
+        var options = angular.extend({}, defaults, config);
+        var scope = $dropdown.$scope = options.scope && options.scope.$new() || $rootScope.$new();
+        $dropdown = $tooltip(element, options);
+        // Protected methods
+        $dropdown.$onKeyDown = function (evt) {
+          if (!/(38|40)/.test(evt.keyCode))
+            return;
+          evt.preventDefault();
+          evt.stopPropagation();
+          // Retrieve focused index
+          var items = angular.element($dropdown.$element[0].querySelectorAll('li:not(.divider) a'));
+          if (!items.length)
+            return;
+          var index;
+          angular.forEach(items, function (el, i) {
+            if (matchesSelector && matchesSelector.call(el, ':focus'))
+              index = i;
+          });
+          // Navigate with keyboard
+          if (evt.keyCode === 38 && index > 0)
+            index--;
+          else if (evt.keyCode === 40 && index < items.length - 1)
+            index++;
+          else if (angular.isUndefined(index))
+            index = 0;
+          items.eq(index)[0].focus();
+        };
+        // Overrides
+        var show = $dropdown.show;
+        $dropdown.show = function () {
+          show();
+          setTimeout(function () {
+            options.keyboard && $dropdown.$element.on('keydown', $dropdown.$onKeyDown);
+            bodyEl.on('click', onBodyClick);
+          });
+        };
+        var hide = $dropdown.hide;
+        $dropdown.hide = function () {
+          options.keyboard && $dropdown.$element.off('keydown', $dropdown.$onKeyDown);
+          bodyEl.off('click', onBodyClick);
+          hide();
+        };
+        // Private functions
+        function onBodyClick(evt) {
+          if (evt.target === element[0])
+            return;
+          return evt.target !== element[0] && $dropdown.hide();
+        }
+        return $dropdown;
+      }
+      return DropdownFactory;
+    }
+  ];
+}).directive('bsDropdown', [
+  '$window',
+  '$location',
+  '$sce',
+  '$dropdown',
+  function ($window, $location, $sce, $dropdown) {
+    return {
+      restrict: 'EAC',
+      scope: true,
+      link: function postLink(scope, element, attr, transclusion) {
+        // Directive options
+        var options = { scope: scope };
+        angular.forEach([
+          'placement',
+          'container',
+          'delay',
+          'trigger',
+          'keyboard',
+          'html',
+          'animation',
+          'template'
+        ], function (key) {
+          if (angular.isDefined(attr[key]))
+            options[key] = attr[key];
+        });
+        // Support scope as an object
+        attr.bsDropdown && scope.$watch(attr.bsDropdown, function (newValue, oldValue) {
+          scope.content = newValue;
+        }, true);
+        // Initialize dropdown
+        var dropdown = $dropdown(element, options);
+        // Garbage collection
+        scope.$on('$destroy', function () {
+          dropdown.destroy();
+          options = null;
+          dropdown = null;
+        });
+      }
+    };
+  }
+]);
+
+// Source: modal.js
+angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).provider('$modal', function () {
+  var defaults = this.defaults = {
+      animation: 'am-fade',
+      backdropAnimation: 'am-fade',
+      prefixClass: 'modal',
+      prefixEvent: 'modal',
+      placement: 'top',
+      template: 'modal/modal.tpl.html',
+      contentTemplate: false,
+      container: false,
+      element: null,
+      backdrop: true,
+      keyboard: true,
+      html: false,
+      show: true
+    };
+  this.$get = [
+    '$window',
+    '$rootScope',
+    '$compile',
+    '$q',
+    '$templateCache',
+    '$http',
+    '$animate',
+    '$timeout',
+    '$sce',
+    'dimensions',
+    function ($window, $rootScope, $compile, $q, $templateCache, $http, $animate, $timeout, $sce, dimensions) {
+      var forEach = angular.forEach;
+      var trim = String.prototype.trim;
+      var requestAnimationFrame = $window.requestAnimationFrame || $window.setTimeout;
+      var bodyElement = angular.element($window.document.body);
+      var htmlReplaceRegExp = /ng-bind="/gi;
+      function ModalFactory(config) {
+        var $modal = {};
+        // Common vars
+        var options = $modal.$options = angular.extend({}, defaults, config);
+        $modal.$promise = fetchTemplate(options.template);
+        var scope = $modal.$scope = options.scope && options.scope.$new() || $rootScope.$new();
+        if (!options.element && !options.container) {
+          options.container = 'body';
+        }
+        // Support scope as string options
+        forEach([
+          'title',
+          'content'
+        ], function (key) {
+          if (options[key])
+            scope[key] = $sce.trustAsHtml(options[key]);
+        });
+        // Provide scope helpers
+        scope.$hide = function () {
+          scope.$$postDigest(function () {
+            $modal.hide();
+          });
+        };
+        scope.$show = function () {
+          scope.$$postDigest(function () {
+            $modal.show();
+          });
+        };
+        scope.$toggle = function () {
+          scope.$$postDigest(function () {
+            $modal.toggle();
+          });
+        };
+        // Support contentTemplate option
+        if (options.contentTemplate) {
+          $modal.$promise = $modal.$promise.then(function (template) {
+            var templateEl = angular.element(template);
+            return fetchTemplate(options.contentTemplate).then(function (contentTemplate) {
+              var contentEl = findElement('[ng-bind="content"]', templateEl[0]).removeAttr('ng-bind').html(contentTemplate);
+              // Drop the default footer as you probably don't want it if you use a custom contentTemplate
+              if (!config.template)
+                contentEl.next().remove();
+              return templateEl[0].outerHTML;
+            });
+          });
+        }
+        // Fetch, compile then initialize modal
+        var modalLinker, modalElement;
+        var backdropElement = angular.element('<div class="' + options.prefixClass + '-backdrop"/>');
+        $modal.$promise.then(function (template) {
+          if (angular.isObject(template))
+            template = template.data;
+          if (options.html)
+            template = template.replace(htmlReplaceRegExp, 'ng-bind-html="');
+          template = trim.apply(template);
+          modalLinker = $compile(template);
+          $modal.init();
+        });
+        $modal.init = function () {
+          // Options: show
+          if (options.show) {
+            scope.$$postDigest(function () {
+              $modal.show();
+            });
+          }
+        };
+        $modal.destroy = function () {
+          // Remove element
+          if (modalElement) {
+            modalElement.remove();
+            modalElement = null;
+          }
+          if (backdropElement) {
+            backdropElement.remove();
+            backdropElement = null;
+          }
+          // Destroy scope
+          scope.$destroy();
+        };
+        $modal.show = function () {
+          scope.$emit(options.prefixEvent + '.show.before', $modal);
+          var parent = options.container ? findElement(options.container) : null;
+          var after = options.container ? null : options.element;
+          // Fetch a cloned element linked from template
+          modalElement = $modal.$element = modalLinker(scope, function (clonedElement, scope) {
+          });
+          // Set the initial positioning.
+          modalElement.css({ display: 'block' }).addClass(options.placement);
+          // Options: animation
+          if (options.animation) {
+            if (options.backdrop) {
+              backdropElement.addClass(options.backdropAnimation);
+            }
+            modalElement.addClass(options.animation);
+          }
+          if (options.backdrop) {
+            $animate.enter(backdropElement, bodyElement, null, function () {
+            });
+          }
+          $animate.enter(modalElement, parent, after, function () {
+            scope.$emit(options.prefixEvent + '.show', $modal);
+          });
+          scope.$isShown = true;
+          scope.$$phase || scope.$root && scope.$root.$$phase || scope.$digest();
+          // Focus once the enter-animation has started
+          // Weird PhantomJS bug hack
+          var el = modalElement[0];
+          requestAnimationFrame(function () {
+            el.focus();
+          });
+          bodyElement.addClass(options.prefixClass + '-open');
+          if (options.animation) {
+            bodyElement.addClass(options.prefixClass + '-with-' + options.animation);
+          }
+          // Bind events
+          if (options.backdrop) {
+            modalElement.on('click', hideOnBackdropClick);
+            backdropElement.on('click', hideOnBackdropClick);
+          }
+          if (options.keyboard) {
+            modalElement.on('keyup', $modal.$onKeyUp);
+          }
+        };
+        $modal.hide = function () {
+          scope.$emit(options.prefixEvent + '.hide.before', $modal);
+          $animate.leave(modalElement, function () {
+            scope.$emit(options.prefixEvent + '.hide', $modal);
+            bodyElement.removeClass(options.prefixClass + '-open');
+            if (options.animation) {
+              bodyElement.addClass(options.prefixClass + '-with-' + options.animation);
+            }
+          });
+          if (options.backdrop) {
+            $animate.leave(backdropElement, function () {
+            });
+          }
+          scope.$isShown = false;
+          scope.$$phase || scope.$root && scope.$root.$$phase || scope.$digest();
+          // Unbind events
+          if (options.backdrop) {
+            modalElement.off('click', hideOnBackdropClick);
+            backdropElement.off('click', hideOnBackdropClick);
+          }
+          if (options.keyboard) {
+            modalElement.off('keyup', $modal.$onKeyUp);
+          }
+        };
+        $modal.toggle = function () {
+          scope.$isShown ? $modal.hide() : $modal.show();
+        };
+        $modal.focus = function () {
+          modalElement[0].focus();
+        };
+        // Protected methods
+        $modal.$onKeyUp = function (evt) {
+          evt.which === 27 && $modal.hide();
+        };
+        // Private methods
+        function hideOnBackdropClick(evt) {
+          if (evt.target !== evt.currentTarget)
+            return;
+          options.backdrop === 'static' ? $modal.focus() : $modal.hide();
+        }
+        return $modal;
+      }
+      // Helper functions
+      function findElement(query, element) {
+        return angular.element((element || document).querySelectorAll(query));
+      }
+      function fetchTemplate(template) {
+        return $q.when($templateCache.get(template) || $http.get(template)).then(function (res) {
+          if (angular.isObject(res)) {
+            $templateCache.put(template, res.data);
+            return res.data;
+          }
+          return res;
+        });
+      }
+      return ModalFactory;
+    }
+  ];
+}).directive('bsModal', [
+  '$window',
+  '$location',
+  '$sce',
+  '$modal',
+  function ($window, $location, $sce, $modal) {
+    return {
+      restrict: 'EAC',
+      scope: true,
+      link: function postLink(scope, element, attr, transclusion) {
+        // Directive options
+        var options = {
+            scope: scope,
+            element: element,
+            show: false
+          };
+        angular.forEach([
+          'template',
+          'contentTemplate',
+          'placement',
+          'backdrop',
+          'keyboard',
+          'html',
+          'container',
+          'animation'
+        ], function (key) {
+          if (angular.isDefined(attr[key]))
+            options[key] = attr[key];
+        });
+        // Support scope as data-attrs
+        angular.forEach([
+          'title',
+          'content'
+        ], function (key) {
+          attr[key] && attr.$observe(key, function (newValue, oldValue) {
+            scope[key] = $sce.trustAsHtml(newValue);
+          });
+        });
+        // Support scope as an object
+        attr.bsModal && scope.$watch(attr.bsModal, function (newValue, oldValue) {
+          if (angular.isObject(newValue)) {
+            angular.extend(scope, newValue);
+          } else {
+            scope.content = newValue;
+          }
+        }, true);
+        // Initialize modal
+        var modal = $modal(options);
+        // Trigger
+        element.on(attr.trigger || 'click', modal.toggle);
+        // Garbage collection
+        scope.$on('$destroy', function () {
+          modal.destroy();
+          options = null;
+          modal = null;
+        });
+      }
+    };
+  }
+]);
+
 // Source: date-parser.js
 angular.module('mgcrea.ngStrap.helpers.dateParser', []).provider('$dateParser', [
   '$localeProvider',
@@ -1564,245 +1958,61 @@ angular.version.minor < 3 && angular.version.dot < 14 && angular.module('ng').fa
      //   };
      // });
 
-// Source: modal.js
-angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).provider('$modal', function () {
+// Source: popover.js
+angular.module('mgcrea.ngStrap.popover', ['mgcrea.ngStrap.tooltip']).provider('$popover', function () {
   var defaults = this.defaults = {
       animation: 'am-fade',
-      backdropAnimation: 'am-fade',
-      prefixClass: 'modal',
-      prefixEvent: 'modal',
-      placement: 'top',
-      template: 'modal/modal.tpl.html',
-      contentTemplate: false,
       container: false,
-      element: null,
-      backdrop: true,
+      target: false,
+      placement: 'right',
+      template: 'popover/popover.tpl.html',
+      contentTemplate: false,
+      trigger: 'click',
       keyboard: true,
       html: false,
-      show: true
+      title: '',
+      content: '',
+      delay: 0
     };
   this.$get = [
-    '$window',
-    '$rootScope',
-    '$compile',
-    '$q',
-    '$templateCache',
-    '$http',
-    '$animate',
-    '$timeout',
-    '$sce',
-    'dimensions',
-    function ($window, $rootScope, $compile, $q, $templateCache, $http, $animate, $timeout, $sce, dimensions) {
-      var forEach = angular.forEach;
-      var trim = String.prototype.trim;
-      var requestAnimationFrame = $window.requestAnimationFrame || $window.setTimeout;
-      var bodyElement = angular.element($window.document.body);
-      var htmlReplaceRegExp = /ng-bind="/gi;
-      function ModalFactory(config) {
-        var $modal = {};
+    '$tooltip',
+    function ($tooltip) {
+      function PopoverFactory(element, config) {
         // Common vars
-        var options = $modal.$options = angular.extend({}, defaults, config);
-        $modal.$promise = fetchTemplate(options.template);
-        var scope = $modal.$scope = options.scope && options.scope.$new() || $rootScope.$new();
-        if (!options.element && !options.container) {
-          options.container = 'body';
+        var options = angular.extend({}, defaults, config);
+        var $popover = $tooltip(element, options);
+        // Support scope as string options [/*title, */content]
+        if (options.content) {
+          $popover.$scope.content = options.content;
         }
-        // Support scope as string options
-        forEach([
-          'title',
-          'content'
-        ], function (key) {
-          if (options[key])
-            scope[key] = $sce.trustAsHtml(options[key]);
-        });
-        // Provide scope helpers
-        scope.$hide = function () {
-          scope.$$postDigest(function () {
-            $modal.hide();
-          });
-        };
-        scope.$show = function () {
-          scope.$$postDigest(function () {
-            $modal.show();
-          });
-        };
-        scope.$toggle = function () {
-          scope.$$postDigest(function () {
-            $modal.toggle();
-          });
-        };
-        // Support contentTemplate option
-        if (options.contentTemplate) {
-          $modal.$promise = $modal.$promise.then(function (template) {
-            var templateEl = angular.element(template);
-            return fetchTemplate(options.contentTemplate).then(function (contentTemplate) {
-              var contentEl = findElement('[ng-bind="content"]', templateEl[0]).removeAttr('ng-bind').html(contentTemplate);
-              // Drop the default footer as you probably don't want it if you use a custom contentTemplate
-              if (!config.template)
-                contentEl.next().remove();
-              return templateEl[0].outerHTML;
-            });
-          });
-        }
-        // Fetch, compile then initialize modal
-        var modalLinker, modalElement;
-        var backdropElement = angular.element('<div class="' + options.prefixClass + '-backdrop"/>');
-        $modal.$promise.then(function (template) {
-          if (angular.isObject(template))
-            template = template.data;
-          if (options.html)
-            template = template.replace(htmlReplaceRegExp, 'ng-bind-html="');
-          template = trim.apply(template);
-          modalLinker = $compile(template);
-          $modal.init();
-        });
-        $modal.init = function () {
-          // Options: show
-          if (options.show) {
-            scope.$$postDigest(function () {
-              $modal.show();
-            });
-          }
-        };
-        $modal.destroy = function () {
-          // Remove element
-          if (modalElement) {
-            modalElement.remove();
-            modalElement = null;
-          }
-          if (backdropElement) {
-            backdropElement.remove();
-            backdropElement = null;
-          }
-          // Destroy scope
-          scope.$destroy();
-        };
-        $modal.show = function () {
-          scope.$emit(options.prefixEvent + '.show.before', $modal);
-          var parent = options.container ? findElement(options.container) : null;
-          var after = options.container ? null : options.element;
-          // Fetch a cloned element linked from template
-          modalElement = $modal.$element = modalLinker(scope, function (clonedElement, scope) {
-          });
-          // Set the initial positioning.
-          modalElement.css({ display: 'block' }).addClass(options.placement);
-          // Options: animation
-          if (options.animation) {
-            if (options.backdrop) {
-              backdropElement.addClass(options.backdropAnimation);
-            }
-            modalElement.addClass(options.animation);
-          }
-          if (options.backdrop) {
-            $animate.enter(backdropElement, bodyElement, null, function () {
-            });
-          }
-          $animate.enter(modalElement, parent, after, function () {
-            scope.$emit(options.prefixEvent + '.show', $modal);
-          });
-          scope.$isShown = true;
-          scope.$$phase || scope.$root && scope.$root.$$phase || scope.$digest();
-          // Focus once the enter-animation has started
-          // Weird PhantomJS bug hack
-          var el = modalElement[0];
-          requestAnimationFrame(function () {
-            el.focus();
-          });
-          bodyElement.addClass(options.prefixClass + '-open');
-          if (options.animation) {
-            bodyElement.addClass(options.prefixClass + '-with-' + options.animation);
-          }
-          // Bind events
-          if (options.backdrop) {
-            modalElement.on('click', hideOnBackdropClick);
-            backdropElement.on('click', hideOnBackdropClick);
-          }
-          if (options.keyboard) {
-            modalElement.on('keyup', $modal.$onKeyUp);
-          }
-        };
-        $modal.hide = function () {
-          scope.$emit(options.prefixEvent + '.hide.before', $modal);
-          $animate.leave(modalElement, function () {
-            scope.$emit(options.prefixEvent + '.hide', $modal);
-            bodyElement.removeClass(options.prefixClass + '-open');
-            if (options.animation) {
-              bodyElement.addClass(options.prefixClass + '-with-' + options.animation);
-            }
-          });
-          if (options.backdrop) {
-            $animate.leave(backdropElement, function () {
-            });
-          }
-          scope.$isShown = false;
-          scope.$$phase || scope.$root && scope.$root.$$phase || scope.$digest();
-          // Unbind events
-          if (options.backdrop) {
-            modalElement.off('click', hideOnBackdropClick);
-            backdropElement.off('click', hideOnBackdropClick);
-          }
-          if (options.keyboard) {
-            modalElement.off('keyup', $modal.$onKeyUp);
-          }
-        };
-        $modal.toggle = function () {
-          scope.$isShown ? $modal.hide() : $modal.show();
-        };
-        $modal.focus = function () {
-          modalElement[0].focus();
-        };
-        // Protected methods
-        $modal.$onKeyUp = function (evt) {
-          evt.which === 27 && $modal.hide();
-        };
-        // Private methods
-        function hideOnBackdropClick(evt) {
-          if (evt.target !== evt.currentTarget)
-            return;
-          options.backdrop === 'static' ? $modal.focus() : $modal.hide();
-        }
-        return $modal;
+        return $popover;
       }
-      // Helper functions
-      function findElement(query, element) {
-        return angular.element((element || document).querySelectorAll(query));
-      }
-      function fetchTemplate(template) {
-        return $q.when($templateCache.get(template) || $http.get(template)).then(function (res) {
-          if (angular.isObject(res)) {
-            $templateCache.put(template, res.data);
-            return res.data;
-          }
-          return res;
-        });
-      }
-      return ModalFactory;
+      return PopoverFactory;
     }
   ];
-}).directive('bsModal', [
+}).directive('bsPopover', [
   '$window',
   '$location',
   '$sce',
-  '$modal',
-  function ($window, $location, $sce, $modal) {
+  '$popover',
+  function ($window, $location, $sce, $popover) {
+    var requestAnimationFrame = $window.requestAnimationFrame || $window.setTimeout;
     return {
       restrict: 'EAC',
       scope: true,
-      link: function postLink(scope, element, attr, transclusion) {
+      link: function postLink(scope, element, attr) {
         // Directive options
-        var options = {
-            scope: scope,
-            element: element,
-            show: false
-          };
+        var options = { scope: scope };
         angular.forEach([
           'template',
           'contentTemplate',
           'placement',
-          'backdrop',
+          'container',
+          'target',
+          'delay',
+          'trigger',
           'keyboard',
           'html',
-          'container',
           'animation'
         ], function (key) {
           if (angular.isDefined(attr[key]))
@@ -1815,143 +2025,78 @@ angular.module('mgcrea.ngStrap.modal', ['mgcrea.ngStrap.helpers.dimensions']).pr
         ], function (key) {
           attr[key] && attr.$observe(key, function (newValue, oldValue) {
             scope[key] = $sce.trustAsHtml(newValue);
+            angular.isDefined(oldValue) && requestAnimationFrame(function () {
+              popover && popover.$applyPlacement();
+            });
           });
         });
         // Support scope as an object
-        attr.bsModal && scope.$watch(attr.bsModal, function (newValue, oldValue) {
+        attr.bsPopover && scope.$watch(attr.bsPopover, function (newValue, oldValue) {
           if (angular.isObject(newValue)) {
             angular.extend(scope, newValue);
           } else {
             scope.content = newValue;
           }
+          angular.isDefined(oldValue) && requestAnimationFrame(function () {
+            popover && popover.$applyPlacement();
+          });
         }, true);
-        // Initialize modal
-        var modal = $modal(options);
-        // Trigger
-        element.on(attr.trigger || 'click', modal.toggle);
+        // Initialize popover
+        var popover = $popover(element, options);
         // Garbage collection
         scope.$on('$destroy', function () {
-          modal.destroy();
+          popover.destroy();
           options = null;
-          modal = null;
+          popover = null;
         });
       }
     };
   }
 ]);
 
-// Source: dropdown.js
-angular.module('mgcrea.ngStrap.dropdown', ['mgcrea.ngStrap.tooltip']).provider('$dropdown', function () {
+// Source: navbar.js
+angular.module('mgcrea.ngStrap.navbar', []).provider('$navbar', function () {
   var defaults = this.defaults = {
-      animation: 'am-fade',
-      prefixClass: 'dropdown',
-      placement: 'bottom-left',
-      template: 'dropdown/dropdown.tpl.html',
-      trigger: 'click',
-      container: false,
-      keyboard: true,
-      html: false,
-      delay: 0
+      activeClass: 'active',
+      routeAttr: 'data-match-route',
+      strict: false
     };
-  this.$get = [
-    '$window',
-    '$rootScope',
-    '$tooltip',
-    function ($window, $rootScope, $tooltip) {
-      var bodyEl = angular.element($window.document.body);
-      var matchesSelector = Element.prototype.matchesSelector || Element.prototype.webkitMatchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector;
-      function DropdownFactory(element, config) {
-        var $dropdown = {};
-        // Common vars
-        var options = angular.extend({}, defaults, config);
-        var scope = $dropdown.$scope = options.scope && options.scope.$new() || $rootScope.$new();
-        $dropdown = $tooltip(element, options);
-        // Protected methods
-        $dropdown.$onKeyDown = function (evt) {
-          if (!/(38|40)/.test(evt.keyCode))
-            return;
-          evt.preventDefault();
-          evt.stopPropagation();
-          // Retrieve focused index
-          var items = angular.element($dropdown.$element[0].querySelectorAll('li:not(.divider) a'));
-          if (!items.length)
-            return;
-          var index;
-          angular.forEach(items, function (el, i) {
-            if (matchesSelector && matchesSelector.call(el, ':focus'))
-              index = i;
-          });
-          // Navigate with keyboard
-          if (evt.keyCode === 38 && index > 0)
-            index--;
-          else if (evt.keyCode === 40 && index < items.length - 1)
-            index++;
-          else if (angular.isUndefined(index))
-            index = 0;
-          items.eq(index)[0].focus();
-        };
-        // Overrides
-        var show = $dropdown.show;
-        $dropdown.show = function () {
-          show();
-          setTimeout(function () {
-            options.keyboard && $dropdown.$element.on('keydown', $dropdown.$onKeyDown);
-            bodyEl.on('click', onBodyClick);
-          });
-        };
-        var hide = $dropdown.hide;
-        $dropdown.hide = function () {
-          options.keyboard && $dropdown.$element.off('keydown', $dropdown.$onKeyDown);
-          bodyEl.off('click', onBodyClick);
-          hide();
-        };
-        // Private functions
-        function onBodyClick(evt) {
-          if (evt.target === element[0])
-            return;
-          return evt.target !== element[0] && $dropdown.hide();
-        }
-        return $dropdown;
-      }
-      return DropdownFactory;
-    }
-  ];
-}).directive('bsDropdown', [
+  this.$get = function () {
+    return { defaults: defaults };
+  };
+}).directive('bsNavbar', [
   '$window',
   '$location',
-  '$sce',
-  '$dropdown',
-  function ($window, $location, $sce, $dropdown) {
+  '$navbar',
+  function ($window, $location, $navbar) {
+    var defaults = $navbar.defaults;
     return {
-      restrict: 'EAC',
-      scope: true,
-      link: function postLink(scope, element, attr, transclusion) {
+      restrict: 'A',
+      link: function postLink(scope, element, attr, controller) {
         // Directive options
-        var options = { scope: scope };
-        angular.forEach([
-          'placement',
-          'container',
-          'delay',
-          'trigger',
-          'keyboard',
-          'html',
-          'animation',
-          'template'
-        ], function (key) {
+        var options = angular.copy(defaults);
+        angular.forEach(Object.keys(defaults), function (key) {
           if (angular.isDefined(attr[key]))
             options[key] = attr[key];
         });
-        // Support scope as an object
-        attr.bsDropdown && scope.$watch(attr.bsDropdown, function (newValue, oldValue) {
-          scope.content = newValue;
-        }, true);
-        // Initialize dropdown
-        var dropdown = $dropdown(element, options);
-        // Garbage collection
-        scope.$on('$destroy', function () {
-          dropdown.destroy();
-          options = null;
-          dropdown = null;
+        // Watch for the $location
+        scope.$watch(function () {
+          return $location.path();
+        }, function (newValue, oldValue) {
+          var liElements = element[0].querySelectorAll('li[' + options.routeAttr + ']');
+          angular.forEach(liElements, function (li) {
+            var liElement = angular.element(li);
+            var pattern = liElement.attr(options.routeAttr).replace('/', '\\/');
+            if (options.strict) {
+              pattern = '^' + pattern + '$';
+            }
+            var regexp = new RegExp(pattern, ['i']);
+            if (regexp.test(newValue)) {
+              liElement.addClass(options.activeClass);
+            } else {
+              liElement.removeClass(options.activeClass);
+            }
+          });
         });
       }
     };
@@ -2175,55 +2320,6 @@ angular.module('mgcrea.ngStrap.scrollspy', [
         angular.forEach(children, function (child) {
           var childEl = angular.element(child);
           childEl.parent().attr('bs-scrollspy', '').attr('data-target', childEl.attr('href'));
-        });
-      }
-    };
-  }
-]);
-
-// Source: navbar.js
-angular.module('mgcrea.ngStrap.navbar', []).provider('$navbar', function () {
-  var defaults = this.defaults = {
-      activeClass: 'active',
-      routeAttr: 'data-match-route',
-      strict: false
-    };
-  this.$get = function () {
-    return { defaults: defaults };
-  };
-}).directive('bsNavbar', [
-  '$window',
-  '$location',
-  '$navbar',
-  function ($window, $location, $navbar) {
-    var defaults = $navbar.defaults;
-    return {
-      restrict: 'A',
-      link: function postLink(scope, element, attr, controller) {
-        // Directive options
-        var options = angular.copy(defaults);
-        angular.forEach(Object.keys(defaults), function (key) {
-          if (angular.isDefined(attr[key]))
-            options[key] = attr[key];
-        });
-        // Watch for the $location
-        scope.$watch(function () {
-          return $location.path();
-        }, function (newValue, oldValue) {
-          var liElements = element[0].querySelectorAll('li[' + options.routeAttr + ']');
-          angular.forEach(liElements, function (li) {
-            var liElement = angular.element(li);
-            var pattern = liElement.attr(options.routeAttr).replace('/', '\\/');
-            if (options.strict) {
-              pattern = '^' + pattern + '$';
-            }
-            var regexp = new RegExp(pattern, ['i']);
-            if (regexp.test(newValue)) {
-              liElement.addClass(options.activeClass);
-            } else {
-              liElement.removeClass(options.activeClass);
-            }
-          });
         });
       }
     };
@@ -2499,102 +2595,6 @@ angular.module('mgcrea.ngStrap.select', [
           select.destroy();
           options = null;
           select = null;
-        });
-      }
-    };
-  }
-]);
-
-// Source: popover.js
-angular.module('mgcrea.ngStrap.popover', ['mgcrea.ngStrap.tooltip']).provider('$popover', function () {
-  var defaults = this.defaults = {
-      animation: 'am-fade',
-      container: false,
-      target: false,
-      placement: 'right',
-      template: 'popover/popover.tpl.html',
-      contentTemplate: false,
-      trigger: 'click',
-      keyboard: true,
-      html: false,
-      title: '',
-      content: '',
-      delay: 0
-    };
-  this.$get = [
-    '$tooltip',
-    function ($tooltip) {
-      function PopoverFactory(element, config) {
-        // Common vars
-        var options = angular.extend({}, defaults, config);
-        var $popover = $tooltip(element, options);
-        // Support scope as string options [/*title, */content]
-        if (options.content) {
-          $popover.$scope.content = options.content;
-        }
-        return $popover;
-      }
-      return PopoverFactory;
-    }
-  ];
-}).directive('bsPopover', [
-  '$window',
-  '$location',
-  '$sce',
-  '$popover',
-  function ($window, $location, $sce, $popover) {
-    var requestAnimationFrame = $window.requestAnimationFrame || $window.setTimeout;
-    return {
-      restrict: 'EAC',
-      scope: true,
-      link: function postLink(scope, element, attr) {
-        // Directive options
-        var options = { scope: scope };
-        angular.forEach([
-          'template',
-          'contentTemplate',
-          'placement',
-          'container',
-          'target',
-          'delay',
-          'trigger',
-          'keyboard',
-          'html',
-          'animation'
-        ], function (key) {
-          if (angular.isDefined(attr[key]))
-            options[key] = attr[key];
-        });
-        // Support scope as data-attrs
-        angular.forEach([
-          'title',
-          'content'
-        ], function (key) {
-          attr[key] && attr.$observe(key, function (newValue, oldValue) {
-            scope[key] = $sce.trustAsHtml(newValue);
-            angular.isDefined(oldValue) && requestAnimationFrame(function () {
-              popover && popover.$applyPlacement();
-            });
-          });
-        });
-        // Support scope as an object
-        attr.bsPopover && scope.$watch(attr.bsPopover, function (newValue, oldValue) {
-          if (angular.isObject(newValue)) {
-            angular.extend(scope, newValue);
-          } else {
-            scope.content = newValue;
-          }
-          angular.isDefined(oldValue) && requestAnimationFrame(function () {
-            popover && popover.$applyPlacement();
-          });
-        }, true);
-        // Initialize popover
-        var popover = $popover(element, options);
-        // Garbage collection
-        scope.$on('$destroy', function () {
-          popover.destroy();
-          options = null;
-          popover = null;
         });
       }
     };
@@ -3343,8 +3343,15 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions']).
             return element[0].blur();
           }
         };
+        var toggling = false;
         $tooltip.toggle = function () {
+          if (toggling)
+            return;
+          toggling = true;
           $tooltip.$isShown ? $tooltip.leave() : $tooltip.enter();
+          setTimeout(function () {
+            toggling = false;
+          }, 0);
         };
         $tooltip.focus = function () {
           tipElement[0].focus();

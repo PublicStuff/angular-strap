@@ -260,8 +260,12 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions'])
 
         };
 
+		var toggling = false;
         $tooltip.toggle = function() {
-          $tooltip.$isShown ? $tooltip.leave() : $tooltip.enter();
+			if (toggling) return;
+			toggling = true;
+          	$tooltip.$isShown ? $tooltip.leave() : $tooltip.enter();
+			setTimeout(function(){ toggling = false; }, 0);
         };
 
         $tooltip.focus = function() {

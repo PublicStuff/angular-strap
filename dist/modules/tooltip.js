@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.3 - 2016-03-08
+ * @version v2.0.3 - 2016-03-09
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -239,8 +239,15 @@ angular.module('mgcrea.ngStrap.tooltip', ['mgcrea.ngStrap.helpers.dimensions']).
             return element[0].blur();
           }
         };
+        var toggling = false;
         $tooltip.toggle = function () {
+          if (toggling)
+            return;
+          toggling = true;
           $tooltip.$isShown ? $tooltip.leave() : $tooltip.enter();
+          setTimeout(function () {
+            toggling = false;
+          }, 0);
         };
         $tooltip.focus = function () {
           tipElement[0].focus();
