@@ -171,6 +171,13 @@ angular.module('mgcrea.ngStrap.select', ['mgcrea.ngStrap.tooltip', 'mgcrea.ngStr
 
         // Overrides
 
+        //disable 'blur' event handling on select button
+        var _init = $select.init;
+        $select.init = function(){
+        _init();
+          element.off('blur', $select.leave);
+        };
+
         var _show = $select.show;
         $select.show = function() {
           _show();
@@ -179,6 +186,7 @@ angular.module('mgcrea.ngStrap.select', ['mgcrea.ngStrap.tooltip', 'mgcrea.ngStr
           }
           setTimeout(function() {
             $select.$element.on(isTouch ? 'touchstart' : 'mousedown', $select.$onMouseDown);
+            $select.$element.on('blur', $select.leave);
             if(options.keyboard) {
               element.on('keydown', $select.$onKeyDown);
             }
@@ -188,6 +196,7 @@ angular.module('mgcrea.ngStrap.select', ['mgcrea.ngStrap.tooltip', 'mgcrea.ngStr
         var _hide = $select.hide;
         $select.hide = function() {
           $select.$element.off(isTouch ? 'touchstart' : 'mousedown', $select.$onMouseDown);
+          $select.$element.off('blur', $select.leave);
           if(options.keyboard) {
             element.off('keydown', $select.$onKeyDown);
           }
