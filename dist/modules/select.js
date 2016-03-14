@@ -1,6 +1,6 @@
 /**
  * angular-strap
- * @version v2.0.3 - 2016-03-09
+ * @version v2.0.3 - 2016-03-14
  * @link http://mgcrea.github.io/angular-strap
  * @author Olivier Louvignes (olivier@mg-crea.com)
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -165,6 +165,12 @@ angular.module('mgcrea.ngStrap.select', [
           scope.$digest();
         };
         // Overrides
+        //disable 'blur' event handling on select button
+        var _init = $select.init;
+        $select.init = function () {
+          _init();
+          element.off('blur', $select.leave);
+        };
         var _show = $select.show;
         $select.show = function () {
           _show();
@@ -173,6 +179,7 @@ angular.module('mgcrea.ngStrap.select', [
           }
           setTimeout(function () {
             $select.$element.on(isTouch ? 'touchstart' : 'mousedown', $select.$onMouseDown);
+            $select.$element.on('blur', $select.leave);
             if (options.keyboard) {
               element.on('keydown', $select.$onKeyDown);
             }
@@ -181,6 +188,7 @@ angular.module('mgcrea.ngStrap.select', [
         var _hide = $select.hide;
         $select.hide = function () {
           $select.$element.off(isTouch ? 'touchstart' : 'mousedown', $select.$onMouseDown);
+          $select.$element.off('blur', $select.leave);
           if (options.keyboard) {
             element.off('keydown', $select.$onKeyDown);
           }
